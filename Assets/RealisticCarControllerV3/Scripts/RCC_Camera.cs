@@ -166,7 +166,7 @@ public class RCC_Camera : MonoBehaviour {
 
     [Range(0f, 20f)] public float TPSDistance = 6f;     // The distance for TPS camera mode.
     [Range(0f, 10f)] public float TPSHeight = 2f;       // The height we want the camera to be above the target for TPS camera mode.
-    [Range(0f, 1f)] public float TPSRotationDamping = .7f;      // Rotation movement damper.
+    [Range(0f, 10f)] public float TPSRotationDamping = .7f;      // Rotation movement damper.
     [Range(0f, 25f)] public float TPSTiltMaximum = 15f;     // Maximum tilt angle related with rigidbody local velocity.
     [Range(0f, 10f)] public float TPSTiltMultiplier = 1.5f;     // Tilt angle multiplier.
     [Range(-45f, 45f)] public float TPSYaw = 0f;        // Yaw angle.
@@ -668,14 +668,14 @@ public class RCC_Camera : MonoBehaviour {
             //  If orbit for TPS is enabled, process orbit Y. Otherwise process Y of the player vehicle only.
             if (!useOrbitInTPSCameraMode) {
 
-                yAngle = Mathf.SmoothDampAngle(transform.eulerAngles.y, cameraTarget.playerVehicle.transform.eulerAngles.y + dir, ref yVelocity, 1f - rotDamp);
+                yAngle = Mathf.SmoothDampAngle(transform.eulerAngles.y, cameraTarget.playerVehicle.transform.eulerAngles.y + dir, ref yVelocity, 2f - rotDamp);
 
             } else {
 
                 if (orbitX != 0)
                     yAngle = Mathf.SmoothDampAngle(transform.eulerAngles.y, cameraTarget.playerVehicle.transform.eulerAngles.y + orbitX_Smoothed, ref yVelocity, .025f);
                 else
-                    yAngle = Mathf.SmoothDampAngle(transform.eulerAngles.y, cameraTarget.playerVehicle.transform.eulerAngles.y + dir, ref yVelocity, 1f - rotDamp);
+                    yAngle = Mathf.SmoothDampAngle(transform.eulerAngles.y, cameraTarget.playerVehicle.transform.eulerAngles.y + dir, ref yVelocity, 2f - rotDamp);
 
             }
 

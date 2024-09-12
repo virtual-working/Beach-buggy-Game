@@ -8,17 +8,17 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Overlay
   - Water
   - UI
-  - 
-  - 
+  - Kart
+  - WorldCollide
+  - Ground
   - RCC
   - RCC_WheelCollider
   - RCC_DetachablePart
   - RCC_Trailer
   - RCC_Crasher
-  - 
   - 
   - 
   - 
