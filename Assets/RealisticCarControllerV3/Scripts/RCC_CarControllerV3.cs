@@ -926,6 +926,7 @@ public class RCC_CarControllerV3 : RCC_Core {
 
     }
 
+    private bool seBackwards;
     private void Update() {
 
         Inputs();
@@ -959,6 +960,24 @@ public class RCC_CarControllerV3 : RCC_Core {
             driftingNow = false;
 
         driftAngle = rearSidewaysSlip * 1f;
+
+        if (CarManager.Instance)
+        {
+            if (CarManager.Instance.gasButton.pressing)
+            {
+                if(speed < 100)
+                    Rigid.velocity += transform.forward * 20f * Time.deltaTime;
+            }
+                
+
+            if (CarManager.Instance.brakeButton.pressing)
+            {
+                if(transform.InverseTransformDirection(Rigid.velocity).z > 1f)
+                    Rigid.velocity -= transform.forward * 20f * Time.deltaTime;
+                else if(canGoReverseNow)
+                    Rigid.velocity -= transform.forward * 1f * Time.deltaTime;
+            }
+        }
 
     }
 
