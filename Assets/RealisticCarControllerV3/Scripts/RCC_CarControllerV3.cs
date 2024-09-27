@@ -235,7 +235,7 @@ public class RCC_CarControllerV3 : RCC_Core {
     public bool useSteeringSensitivity = true;                          //	Steering sensitivity.
     [Range(0f, 1f)] public float counterSteeringFactor = .5f;                // Counter steering multiplier.
     [Range(.05f, 1f)] public float steeringSensitivityFactor = 1f;      // Steering sensitivity multiplier.
-    private float orgSteerAngle = 0f;       // Original steer angle.
+    public float orgSteerAngle = 0f;       // Original steer angle.
     public float oldSteeringInput = 0f;     //	Old steering input.
     public float steeringDifference = 0f;   //	Steering input difference.
     #endregion
@@ -961,24 +961,31 @@ public class RCC_CarControllerV3 : RCC_Core {
 
         driftAngle = rearSidewaysSlip * 1f;
 
-        if (CarManager.Instance)
+        if (!externalController)
         {
-            if (CarManager.Instance.gasButton.pressing)
+            if (CarManager.Instance)
             {
-                if(speed < 100)
-                    Rigid.velocity += transform.forward * 20f * Time.deltaTime;
-            }
-                
+                if (CarManager.Instance.gasButton != null)
+                {
+                    if (CarManager.Instance.gasButton.pressing)
+                    {
+                        if (speed < 100)
+                            Rigid.velocity += transform.forward * 20f * Time.deltaTime;
+                    }
+                }
 
-            if (CarManager.Instance.brakeButton.pressing)
-            {
-                if(transform.InverseTransformDirection(Rigid.velocity).z > 1f)
-                    Rigid.velocity -= transform.forward * 20f * Time.deltaTime;
-                else if(canGoReverseNow)
-                    Rigid.velocity -= transform.forward * 1f * Time.deltaTime;
+                if (CarManager.Instance.brakeButton != null)
+                {
+                    if (CarManager.Instance.brakeButton.pressing)
+                    {
+                        if (transform.InverseTransformDirection(Rigid.velocity).z > 1f)
+                            Rigid.velocity -= transform.forward * 20f * Time.deltaTime;
+                        else if (canGoReverseNow)
+                            Rigid.velocity -= transform.forward * 1f * Time.deltaTime;
+                    }
+                }
             }
         }
-
     }
 
     private void FixedUpdate() {
