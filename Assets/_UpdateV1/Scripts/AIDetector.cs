@@ -22,82 +22,52 @@ public class AIDetector : MonoBehaviour
         }
     }*/
 
-    public float pushForce = 5.0f;                // Force applied to push AI cars on collision
-    public float collisionDisturbanceTime = 2.0f; // How long the AI is disturbed after collision
-    public float speedReductionFactor = 0.8f;     // Slowdown factor after a collision
-    public float speedRecoveryTime = 3.0f;        // Time to recover speed after a collision
+    public float pushForce = 5000.0f;                // Force applied to push AI cars on collision
+   /* public float collisionDisturbanceTime = 2.0f;*/ // How long the AI is disturbed after collision
+    /*public float speedReductionFactor = 0.8f; */    // Slowdown factor after a collision
+   /* public float speedRecoveryTime = 3.0f; */       // Time to recover speed after a collision
 
-    public bool isDisturbed = false;             // To track if AI is disturbed
-    public float disturbanceTimer = 0f;          // Timer for how long AI is disturbed
-    public Vector3 disturbanceDirection;         // Direction to disturb the AI
-    public Rigidbody rb;                         // AI car's Rigidbody component
-    public float originalSpeed;                  // Store original speed before the collision
-    public float currentSpeed;                   // Current speed of the AI
+    /*public bool isDisturbed = false; */            // To track if AI is disturbed
+ /*   public float disturbanceTimer = 0f;          // Timer for how long AI is disturbed
+    public Vector3 disturbanceDirection;*/         // Direction to disturb the AI
+    public Rigidbody rb;
+    public Transform COM;
+    // AI car's Rigidbody component
+    /*    public float originalSpeed;                  // Store original speed before the collision
+        public float currentSpeed;*/                   // Current speed of the AI
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        originalSpeed = GetComponent<RCC_CarControllerV3>().maxspeed; // Store AI car's original speed
-        currentSpeed = originalSpeed;
+        /*   originalSpeed = GetComponent<RCC_CarControllerV3>().maxspeed; // Store AI car's original speed
+           currentSpeed = originalSpeed;*/
+        Time.timeScale = 0.4f;
+        Invoke("Jump", 0.25f);
+    }
+
+    void Jump()
+    {
+        rb.AddForce(transform.forward * 5000, ForceMode.Impulse);
+        COM.localPosition = Vector3.zero;
+        Invoke("time", 0.25f);
+    }
+
+    void time()
+    {
+        COM.localPosition = Vector3.zero;
+        Time.timeScale = 1.0f;
     }
 
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("AI"))
+        if (collision.gameObject.CompareTag("AI")|| collision.gameObject.CompareTag("Player"))
         {
             
             // Apply physical push to the other AI car
             Rigidbody otherRigidbody = collision.gameObject.GetComponent<Rigidbody>();
-            otherRigidbody.GetComponent<RCC_AICarController>().enabled = false;
-            otherRigidbody.GetComponent<RCC_CarControllerV3>().enabled = false;
             Vector3 pushDirection = collision.contacts[0].normal;
             otherRigidbody.AddForce(-pushDirection * pushForce, ForceMode.Impulse);
-
-            // Start disturbance behavior
-            isDisturbed = true;
-            disturbanceTimer = collisionDisturbanceTime;
-
-            // Determine a random direction for the disturbance
-            disturbanceDirection = Random.insideUnitSphere;
-            disturbanceDirection.y = 0; // Keep disturbance horizontal (ignore y-axis)
-
-            // Reduce AI's speed temporarily
-            currentSpeed *= speedReductionFactor;
-            GetComponent<RCC_CarControllerV3>().speed = currentSpeed;
+            Debug.Log("Add Force");
         }
     }
-
-    void Update()
-    {
-        if (isDisturbed)
-        {
-            disturbanceTimer -= Time.deltaTime;
-
-            // Apply a temporary disturbance in steering
-            float disturbanceStrength = disturbanceDirection.x * 0.5f; // You can adjust the multiplier to control the amount of steering disturbance
-            GetComponent<RCC_CarControllerV3>().orgSteerAngle = (disturbanceStrength);
-
-            GetComponent<RCC_CarControllerV3>().throttleInput = 0f;
-            GetComponent<RCC_CarControllerV3>().brakeInput = 1f;
-
-            // Gradually recover AI's speed over time
-            currentSpeed = Mathf.Lerp(currentSpeed, originalSpeed, Time.deltaTime / speedRecoveryTime);
-            GetComponent<RCC_CarControllerV3>().speed = currentSpeed;
-
-            // End disturbance after the timer expires
-            if (disturbanceTimer <= 0)
-            {
-                isDisturbed = false;
-                disturbanceDirection = Vector3.zero;
-                GetComponent<RCC_CarControllerV3>().maxspeed = originalSpeed; // Restore original speed
-
-                GetComponent<RCC_CarControllerV3>().throttleInput = 0f;
-                GetComponent<RCC_CarControllerV3>().brakeInput = 1f;
-
-                GetComponent<RCC_AICarController>().enabled = true;
-                GetComponent<RCC_CarControllerV3>().enabled = true;
-            }
-        }
-    }
-
 }
