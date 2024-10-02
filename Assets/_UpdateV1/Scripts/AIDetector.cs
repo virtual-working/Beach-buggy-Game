@@ -42,7 +42,8 @@ public class AIDetector : MonoBehaviour
         /*   originalSpeed = GetComponent<RCC_CarControllerV3>().maxspeed; // Store AI car's original speed
            currentSpeed = originalSpeed;*/
         Time.timeScale = 0.4f;
-        Invoke("Jump", 0.25f);
+        if(gameObject.tag == "Player")
+            Invoke("Jump", 0.25f);
     }
 
     void Jump()

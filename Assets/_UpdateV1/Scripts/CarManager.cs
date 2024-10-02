@@ -7,6 +7,8 @@ public class CarManager : Singleton<CarManager>
     public RCC_UIController gasButton;
 
     public RCC_UIController brakeButton;
+
+    public GameObject RCC_PlayerCar;
     // Start is called before the first frame update
     void Start()
     {
